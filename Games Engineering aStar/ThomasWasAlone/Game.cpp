@@ -66,17 +66,19 @@ bool Game::init() {
 	playerCol = 0;
 	m_tiles[playerRow][playerCol].setPlayer(true);
 
-	enemy1 = new Enemy(9,8,gridSize);
+	enemy1 = new Enemy(9,5,gridSize);
 	enemy1->aStar(playerRow, playerCol, m_tiles);
-	m_tiles[9][8].setEnemy(true);
-	m_tiles[4][1].setFilled(true);
+	m_tiles[9][5].setEnemy(true);
+
+
+	/*m_tiles[4][1].setFilled(true);
 	m_tiles[4][2].setFilled(true);
 	m_tiles[4][3].setFilled(true);
 	m_tiles[4][4].setFilled(true);
 	m_tiles[4][5].setFilled(true);
 	m_tiles[4][6].setFilled(true);
 	m_tiles[4][7].setFilled(true);
-	m_tiles[4][8].setFilled(true);
+	m_tiles[4][8].setFilled(true);*/
 
 	return true;
 
@@ -100,7 +102,7 @@ void Game::update()
 	//save the curent time for next frame
 	lastTime = currentTime;
 
-
+	enemy1->Update(deltaTime, m_tiles);
 
 }
 
@@ -135,6 +137,7 @@ void Game::render()
 /** update and render game entities*/
 void Game::loop()
 {
+	
 	LTimer capTimer;//to cap framerate
 
 	int frameNum = 0;
@@ -153,6 +156,8 @@ void Game::loop()
 			//Wait remaining time before going to next frame
 			SDL_Delay(SCREEN_TICKS_PER_FRAME - frameTicks);
 		}
+
+	
 	}
 }
 
@@ -164,6 +169,9 @@ void Game::onEvent(EventListener::Event evt) {
 	
 	if (evt == EventListener::Event::QUIT) {
 		quit=true;
+	}
+	if (evt == EventListener::Event::UP||evt == EventListener::Event::DOWN||evt == EventListener::Event::LEFT||evt == EventListener::Event::RIGHT) {
+		enemy1->aStar(playerRow, playerCol, m_tiles);
 	}
 	if (evt == EventListener::Event::UP) {
 

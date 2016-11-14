@@ -18,14 +18,15 @@ public:
 	Enemy(int row, int col,int gridsize);
 	Enemy();
 	~Enemy();
-	void Update(unsigned int deltaTime, int targetRow, int targetCol, Tiles **t);
+	void Update(unsigned int deltaTime,  Tiles **t);
 	void aStar(int targetRow,int targetCol,Tiles **t);
 	void getAdjacent(Tiles ** t, int tileRow, int tileCol);
-	void calculateFValues();
+	void calculateFValues(std::vector<Tiles>& tilelist);
 private:
 	std::vector<Tiles> adjacentList;
 	std::vector<Tiles> openList;
 	std::vector<Tiles> closedList;
+	std::vector<Tiles> Path;
 	int currentRow;
 	int currentCol;
 	int lowestElement;
