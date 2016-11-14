@@ -106,7 +106,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjrctDir)SDL2-2.0.4\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjrctDir)SDL2-2.0.4\include;C:\Users\Josh\Desktop\a-GamesEngineering\Games Engineering aStar\ThomasWasAlone</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

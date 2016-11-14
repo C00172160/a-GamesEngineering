@@ -26,8 +26,9 @@ Game::~Game()
 }
 
 
-bool Game::init() {	
+bool Game::init(int num) {	
 	Size2D winSize(800,600);
+	gridSize = num;
 
 	 m_tiles = new Tiles*[gridSize];
 	 for (int i = 0; i < gridSize; ++i)//initilize 2d array
@@ -59,6 +60,7 @@ bool Game::init() {
 		for (int col = 0; col < gridSize; col++)
 		{
 			m_tiles[row][col] = Tiles(Rect((col * tileWidth) , (row * tileHeight), tileWidth, tileHeight),row,col);
+		
 		}
 	}
 
@@ -66,20 +68,69 @@ bool Game::init() {
 	playerCol = 0;
 	m_tiles[playerRow][playerCol].setPlayer(true);
 
-	enemy1 = new Enemy(9,5,gridSize);
-	enemy1->aStar(playerRow, playerCol, m_tiles);
-	m_tiles[9][5].setEnemy(true);
+	if (gridSize == 10)
+	{
+		MaxEnemies = 2;
 
+		for (int i = 0; i < MaxEnemies; i++)
+		{
+			int row = rand() % (gridSize - 1) + 1;
+			int col = rand() % (gridSize - 1) + 1;
 
-	/*m_tiles[4][1].setFilled(true);
-	m_tiles[4][2].setFilled(true);
-	m_tiles[4][3].setFilled(true);
-	m_tiles[4][4].setFilled(true);
-	m_tiles[4][5].setFilled(true);
-	m_tiles[4][6].setFilled(true);
-	m_tiles[4][7].setFilled(true);
-	m_tiles[4][8].setFilled(true);*/
+			if (m_tiles[row][col].getEnemy()==false)
+			{
+				m_tiles[row][col].setEnemy(true);
+				enemies.push_back(Enemy(row, col, gridSize));
+			}
+			
+		
+		}
+	
+	}
+	else if (gridSize == 20)
+	{
+		MaxEnemies = 4;
 
+		for (int i = 0; i < MaxEnemies; i++)
+		{
+			int row = rand() % (gridSize - 1) + 1;
+			int col = rand() % (gridSize - 1) + 1;
+			if (m_tiles[row][col].getEnemy() == false)
+			{
+				m_tiles[row][col].setEnemy(true);
+				enemies.push_back(Enemy(row, col, gridSize));
+			}
+
+			
+		}
+		
+	}
+	else if (gridSize == 100)
+	{
+		MaxEnemies = 20;
+
+		for (int i = 0; i < MaxEnemies; i++)
+		{
+			int row = rand() % (gridSize - 1) + 1;
+			int col = rand() % (gridSize - 1) + 1;
+			if (m_tiles[row][col].getEnemy() == false)
+			{
+				m_tiles[row][col].setEnemy(true);
+				enemies.push_back(Enemy(row, col, gridSize));
+			}
+
+		
+		}
+	
+	}
+
+	for (int i = 0; i < MaxEnemies; i++)
+	{
+		enemies[i].aStar(playerRow, playerCol, m_tiles);
+	}
+	
+	//enemy1->aStar(playerRow, playerCol, m_tiles);
+	//enemy2->aStar(playerRow, playerCol, m_tiles);
 	return true;
 
 }
@@ -101,9 +152,12 @@ void Game::update()
 	//enemy1->Update(deltaTime,playerRow,playerCol,m_tiles);
 	//save the curent time for next frame
 	lastTime = currentTime;
-
-	enemy1->Update(deltaTime, m_tiles);
-
+	for (int i = 0; i < MaxEnemies; i++)
+	{
+		enemies[i].Update(deltaTime, m_tiles);
+	}
+	/*enemy1->Update(deltaTime, m_tiles);
+	enemy2->Update(deltaTime, m_tiles);*/
 }
 
 void Game::updateArray()
@@ -171,7 +225,12 @@ void Game::onEvent(EventListener::Event evt) {
 		quit=true;
 	}
 	if (evt == EventListener::Event::UP||evt == EventListener::Event::DOWN||evt == EventListener::Event::LEFT||evt == EventListener::Event::RIGHT) {
-		enemy1->aStar(playerRow, playerCol, m_tiles);
+		//enemy1->aStar(playerRow, playerCol, m_tiles);
+		//enemy2->aStar(playerRow, playerCol, m_tiles);
+		for (int i = 0; i < MaxEnemies; i++)
+		{
+			enemies[i].aStar(playerRow, playerCol, m_tiles);
+		}
 	}
 	if (evt == EventListener::Event::UP) {
 

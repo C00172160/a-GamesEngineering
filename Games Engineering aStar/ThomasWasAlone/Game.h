@@ -17,7 +17,7 @@ class Game:public EventListener
 
 	std::vector<GameObject*> gameObjects;
 	unsigned int lastTime;//time of last update;
-	int gridSize = 10;
+	int gridSize = 100;
 	Tiles** m_tiles;
 	int playerRow;
 	int playerCol;
@@ -25,13 +25,17 @@ class Game:public EventListener
 	int tileHeight;
 	bool pause;
 	bool quit;
+	vector<Enemy>enemies;
+	int MaxEnemies;
+
 	Enemy *enemy1;
+	Enemy *enemy2;
 
 public:
 	Game();
 	~Game();
 
-	bool init();
+	bool init(int num);
 	void destroy();
 
 	void update();

@@ -17,6 +17,9 @@ Tiles::Tiles(int row, int col, int f)
 	gridRow = row;
 	gridCol = col;
 	fValue = f;
+	player = false;
+	enemy = false;
+	filled = false;
 }
 
 Tiles::Tiles()

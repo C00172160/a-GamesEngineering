@@ -18,7 +18,7 @@ public:
 	Enemy(int row, int col,int gridsize);
 	Enemy();
 	~Enemy();
-	void Update(unsigned int deltaTime,  Tiles **t);
+	void Update(unsigned int deltaTime,  Tiles  **t);
 	void aStar(int targetRow,int targetCol,Tiles **t);
 	void getAdjacent(Tiles ** t, int tileRow, int tileCol);
 	void calculateFValues(std::vector<Tiles>& tilelist);

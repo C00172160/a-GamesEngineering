@@ -35,7 +35,7 @@ void Enemy::Update(unsigned int deltaTime,  Tiles ** t)
 	{
 		count += deltaTime;
 
-		if (count > 30)
+		if (count > 100)
 		{
 			t[positionY][positionX].setEnemy(false);
 
@@ -79,9 +79,13 @@ void Enemy::aStar(int targetRow, int targetCol, Tiles ** t)
 			{
 				openList.erase(openList.begin() + i);
 			}
+		
 		}
 
 		calculateFValues(openList);
+
+		
+
 		for (int i = 0; i < openList.size(); i++)
 		{
 			if (openList[i].getFvalue() < fCost)
@@ -103,8 +107,7 @@ void Enemy::aStar(int targetRow, int targetCol, Tiles ** t)
 
 	}
 	
-	/*std::reverse(Path.begin(), Path.end());
-	int i = 0;*/
+	
 
 	
 
@@ -112,8 +115,9 @@ void Enemy::aStar(int targetRow, int targetCol, Tiles ** t)
 
 void Enemy::getAdjacent(Tiles ** t, int tileRow, int tileCol)
 {
-	adjacentList.clear();
 
+
+	adjacentList.clear();
 	if (tileRow > 0 && tileCol >0)
 	adjacentList.push_back(Tiles(tileRow-1,tileCol-1,0));//only check the tiles around yourself so you are not checking the whole array
 	if (tileRow >0)
@@ -132,16 +136,17 @@ void Enemy::getAdjacent(Tiles ** t, int tileRow, int tileCol)
 	adjacentList.push_back(Tiles(tileRow +1, tileCol + 1, 0));
 
 	for (int i = 0; i < adjacentList.size(); i++)
-	{
-		//if (adjacentList[i].getFilled() == true || adjacentList[i].getEnemy() == true )//only check viable tiles.
-		//{
-		//	adjacentList.erase(adjacentList.begin() + i);
-		//	continue;
-		//}	
-
+	{	
+		int row = adjacentList[i].getRow();
+		int col = adjacentList[i].getCol();
 		
-		openList.push_back(Tiles(adjacentList[i].getRow(),adjacentList[i].getCol(),0));
-
+		if (t[row][col].getFilled() == false && t[row][col].getEnemy() == false)
+		{
+			openList.push_back(Tiles(adjacentList[i].getRow(), adjacentList[i].getCol(), 0));
+		}
+		
+		
+		
 	}
 	
 }
