@@ -8,7 +8,7 @@ using namespace std;
 #include "LTimer.h"
 #include "Tiles.h"
 #include "Game.h"
-
+#include <thread> 
 
 const int SCREEN_FPS = 100;
 const int SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
@@ -23,6 +23,16 @@ Game::Game()
 
 Game::~Game()
 {
+}
+
+void Game::ThreadAstar(int start, int end)
+{
+
+	for (int i = start; i < end; i++)
+	{
+		enemies[i].aStar(playerRow, playerCol, m_tiles);
+	}
+
 }
 
 
@@ -43,7 +53,7 @@ bool Game::init(int num) {
 	lastTime = LTimer::gameTime();
 
 
-	
+
 
 	
 	inputManager.AddListener(EventListener::Event::PAUSE, this);
@@ -124,10 +134,15 @@ bool Game::init(int num) {
 	
 	}
 
-	for (int i = 0; i < MaxEnemies; i++)
+
+	std::thread t1(&Game::ThreadAstar, this, 0, 2);
+	std::thread t2(&Game::ThreadAstar, this, 2, 4);
+	t1.join();
+	t2.join();
+	/*for (int i = 0; i < MaxEnemies; i++)
 	{
 		enemies[i].aStar(playerRow, playerCol, m_tiles);
-	}
+	}*/
 	
 	//enemy1->aStar(playerRow, playerCol, m_tiles);
 	//enemy2->aStar(playerRow, playerCol, m_tiles);
@@ -227,10 +242,17 @@ void Game::onEvent(EventListener::Event evt) {
 	if (evt == EventListener::Event::UP||evt == EventListener::Event::DOWN||evt == EventListener::Event::LEFT||evt == EventListener::Event::RIGHT) {
 		//enemy1->aStar(playerRow, playerCol, m_tiles);
 		//enemy2->aStar(playerRow, playerCol, m_tiles);
-		for (int i = 0; i < MaxEnemies; i++)
-		{
-			enemies[i].aStar(playerRow, playerCol, m_tiles);
-		}
+		std::thread t1(&Game::ThreadAstar, this, 0, 2);
+		std::thread t2(&Game::ThreadAstar, this, 2, 4);
+		t1.join();
+		t2.join();
+		//for (int i = 0; i < MaxEnemies; i++)
+		//{
+		//	
+		//	
+		//	enemies[i].aStar(playerRow, playerCol, m_tiles);
+		//}
+		
 	}
 	if (evt == EventListener::Event::UP) {
 

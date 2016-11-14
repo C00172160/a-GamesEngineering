@@ -7,6 +7,7 @@
 #include "InputManager.h"
 #include "EventListener.h"
 #include "Tiles.h"
+#include <thread>
 #include "Enemy.h"
 
 /** The game objct whic manages the game loop*/
@@ -14,7 +15,7 @@ class Game:public EventListener
 {
 	InputManager inputManager;
 	Renderer renderer;
-
+	thread *thread1;
 	std::vector<GameObject*> gameObjects;
 	unsigned int lastTime;//time of last update;
 	int gridSize = 100;
@@ -34,10 +35,9 @@ class Game:public EventListener
 public:
 	Game();
 	~Game();
-
+	void ThreadAstar(int start,int end );
 	bool init(int num);
 	void destroy();
-
 	void update();
 	void updateArray();
 	void render();
