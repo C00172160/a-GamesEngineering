@@ -37,7 +37,7 @@ void Game::ThreadAstar(int start, int end)
 
 
 bool Game::init(int num) {	
-	Size2D winSize(800,600);
+	Size2D winSize(500,500);
 	gridSize = num;
 
 	 m_tiles = new Tiles*[gridSize];
@@ -92,7 +92,10 @@ bool Game::init(int num) {
 				m_tiles[row][col].setEnemy(true);
 				enemies.push_back(Enemy(row, col, gridSize));
 			}
-			
+			else
+			{
+				MaxEnemies -= 1;
+			}
 		
 		}
 	
@@ -110,16 +113,20 @@ bool Game::init(int num) {
 				m_tiles[row][col].setEnemy(true);
 				enemies.push_back(Enemy(row, col, gridSize));
 			}
-
+			else
+			{
+				MaxEnemies -= 1;
+			}
 			
 		}
 		
 	}
 	else if (gridSize == 100)
 	{
-		MaxEnemies = 20;
+		int mm = 700;
+		MaxEnemies = 0;
 
-		for (int i = 0; i < MaxEnemies; i++)
+		for (int i = 0; i < mm; i++)
 		{
 			int row = rand() % (gridSize - 1) + 1;
 			int col = rand() % (gridSize - 1) + 1;
@@ -127,7 +134,9 @@ bool Game::init(int num) {
 			{
 				m_tiles[row][col].setEnemy(true);
 				enemies.push_back(Enemy(row, col, gridSize));
+				MaxEnemies++;
 			}
+			
 
 		
 		}
@@ -135,19 +144,36 @@ bool Game::init(int num) {
 	}
 
 
-	std::thread t1(&Game::ThreadAstar, this, 0, 2);
-	std::thread t2(&Game::ThreadAstar, this, 2, 4);
-	t1.join();
-	t2.join();
-	/*for (int i = 0; i < MaxEnemies; i++)
+	//std::thread t1(&Game::ThreadAstar, this, 0, 2);
+	//std::thread t2(&Game::ThreadAstar, this, 2, 4);
+	//t1.join();
+	//t2.join();
+	
+	m_tiles[4][2].setFilled(true);
+	m_tiles[4][3].setFilled(true);
+	m_tiles[4][4].setFilled(true);
+	m_tiles[4][5].setFilled(true);
+	m_tiles[4][6].setFilled(true);
+	m_tiles[4][7].setFilled(true);
+
+
+	for (int i = 0; i < MaxEnemies; i++)
 	{
 		enemies[i].aStar(playerRow, playerCol, m_tiles);
-	}*/
+	}
 	
-	//enemy1->aStar(playerRow, playerCol, m_tiles);
-	//enemy2->aStar(playerRow, playerCol, m_tiles);
+//	enemy1->aStar(playerRow, playerCol, m_tiles);
+//	enemy2->aStar(playerRow, playerCol, m_tiles);
 	return true;
 
+}
+
+void Game::aStar()
+{
+	for (int i = 0; i < MaxEnemies; i++)
+	{
+		enemies[i].aStar(playerRow, playerCol, m_tiles);
+	}
 }
 
 
@@ -242,16 +268,11 @@ void Game::onEvent(EventListener::Event evt) {
 	if (evt == EventListener::Event::UP||evt == EventListener::Event::DOWN||evt == EventListener::Event::LEFT||evt == EventListener::Event::RIGHT) {
 		//enemy1->aStar(playerRow, playerCol, m_tiles);
 		//enemy2->aStar(playerRow, playerCol, m_tiles);
-		std::thread t1(&Game::ThreadAstar, this, 0, 2);
+	/*	std::thread t1(&Game::ThreadAstar, this, 0, 2);
 		std::thread t2(&Game::ThreadAstar, this, 2, 4);
 		t1.join();
-		t2.join();
-		//for (int i = 0; i < MaxEnemies; i++)
-		//{
-		//	
-		//	
-		//	enemies[i].aStar(playerRow, playerCol, m_tiles);
-		//}
+		t2.join();*/
+	
 		
 	}
 	if (evt == EventListener::Event::UP) {
@@ -262,6 +283,8 @@ void Game::onEvent(EventListener::Event evt) {
 			playerRow--;
 			m_tiles[playerRow][playerCol].setPlayer(true);
 		}
+		aStar();
+
 	}
 
 	if (evt == EventListener::Event::DOWN) {
@@ -272,6 +295,7 @@ void Game::onEvent(EventListener::Event evt) {
 			playerRow++;
 			m_tiles[playerRow][playerCol].setPlayer(true);
 		}
+		aStar();
 	}
 
 	if (evt == EventListener::Event::LEFT) {
@@ -282,6 +306,7 @@ void Game::onEvent(EventListener::Event evt) {
 			playerCol--;
 			m_tiles[playerRow][playerCol].setPlayer(true);
 		}
+		aStar();
 	}
 
 	if (evt == EventListener::Event::RIGHT) {
@@ -292,6 +317,7 @@ void Game::onEvent(EventListener::Event evt) {
 			playerCol++;
 			m_tiles[playerRow][playerCol].setPlayer(true);
 		}
+		aStar();
 		
 	}
 

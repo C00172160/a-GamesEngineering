@@ -37,6 +37,7 @@ public:
 	~Game();
 	void ThreadAstar(int start,int end );
 	bool init(int num);
+	void aStar();
 	void destroy();
 	void update();
 	void updateArray();

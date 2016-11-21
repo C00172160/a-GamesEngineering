@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Enemy.h"
 #include "Tiles.h"
-
+#include <iostream>
 
 
 
@@ -35,8 +35,9 @@ void Enemy::Update(unsigned int deltaTime,  Tiles ** t)
 	{
 		count += deltaTime;
 
-		if (count > 100)
+		if (count > 100 && t[Path[0].getRow()][Path[0].getCol()].getEnemy() == false && targetFound == true)
 		{
+
 			t[positionY][positionX].setEnemy(false);
 
 			positionY = Path[0].getRow();
@@ -46,6 +47,9 @@ void Enemy::Update(unsigned int deltaTime,  Tiles ** t)
 			Path.erase(Path.begin());
 			count = 0;
 		}
+
+		
+		
 	}
 
 	
@@ -55,22 +59,27 @@ void Enemy::Update(unsigned int deltaTime,  Tiles ** t)
 
 void Enemy::aStar(int targetRow, int targetCol, Tiles ** t)
 {
-
+	Path.clear();
 	targetCOL = targetCol;
 	targetROW = targetRow;
 	StartRow = positionY;
 	StartCol = positionX;
 	targetFound = false;
-	Path.clear();
+	targetFound = false;
+	fCost = 100000;
+	openList.clear();
+	int  Loopcount = 0;
+
+
 	while (targetFound == false)
 	{
 		
-		fCost = 1000;
-
+		fCost = 100000;
 
 		openList.push_back(Tiles(StartRow, StartCol, 0));//add first node to open list
 		getAdjacent(t, StartRow, StartCol);
-		//t[StartRow][StartCol].setEnemy(true);
+
+	
 		Path.push_back(Tiles(StartRow, StartCol, 0));
 
 		for (int i = 0; i < openList.size(); i++)
@@ -94,17 +103,28 @@ void Enemy::aStar(int targetRow, int targetCol, Tiles ** t)
 				StartCol = openList[i].getCol();
 				fCost = openList[i].getFvalue();
 			}
-		}
 
+		}
+	
 		openList.clear();
 
 
 		if (targetROW == StartRow && targetCOL == StartCol)
 		{
 			targetFound = true;
+			Path.erase(Path.begin());
+		}
+		else
+		{
+			Loopcount++;
+
+			if (Loopcount > 100)
+			{
+				break;
+			}
 		}
 
-
+		
 	}
 	
 	
@@ -139,15 +159,19 @@ void Enemy::getAdjacent(Tiles ** t, int tileRow, int tileCol)
 	{	
 		int row = adjacentList[i].getRow();
 		int col = adjacentList[i].getCol();
-		
-		if (t[row][col].getFilled() == false && t[row][col].getEnemy() == false)
+
+	
+		if (t[row][col].getFilled() == false)
 		{
 			openList.push_back(Tiles(adjacentList[i].getRow(), adjacentList[i].getCol(), 0));
 		}
 		
 		
 		
+		
+		
 	}
+
 	
 }
 
