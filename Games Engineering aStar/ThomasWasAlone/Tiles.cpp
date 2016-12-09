@@ -55,9 +55,7 @@ void Tiles::Render(Renderer & renderer)
 
 }
 
-void Tiles::Update(unsigned int deltaTime)
-{
-}
+
 
 Rect Tiles::getRectangle()
 {

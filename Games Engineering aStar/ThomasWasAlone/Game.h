@@ -15,7 +15,7 @@ class Game:public EventListener
 {
 	InputManager inputManager;
 	Renderer renderer;
-	thread *thread1;
+	
 	std::vector<GameObject*> gameObjects;
 	unsigned int lastTime;//time of last update;
 	int gridSize = 100;
@@ -28,7 +28,8 @@ class Game:public EventListener
 	bool quit;
 	vector<Enemy>enemies;
 	int MaxEnemies;
-
+	
+	Rect* CameraBounds;
 	Enemy *enemy1;
 	Enemy *enemy2;
 

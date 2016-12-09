@@ -37,8 +37,11 @@ void Game::ThreadAstar(int start, int end)
 
 
 bool Game::init(int num) {	
-	Size2D winSize(500,500);
+
+	
 	gridSize = num;
+	
+	
 
 	 m_tiles = new Tiles*[gridSize];
 	 for (int i = 0; i < gridSize; ++i)//initilize 2d array
@@ -46,10 +49,10 @@ bool Game::init(int num) {
 		 m_tiles[i] = new Tiles[gridSize];
 	 }
 
-	tileWidth = winSize.w / gridSize;//find the width of a tiles depending on how big the screen is
-	tileHeight = winSize.h / gridSize;
+	 tileWidth = 20;//winSize.w / gridSize;//find the width of a tiles depending on how big the screen is
+		 tileHeight = 20;// winSize.h / gridSize;
 	//creates our renderer, which looks after drawing and the window
-	renderer.init(winSize,"Simple SDL App");
+	
 	lastTime = LTimer::gameTime();
 
 
@@ -80,6 +83,9 @@ bool Game::init(int num) {
 
 	if (gridSize == 10)
 	{
+		Size2D winSize(200, 200);
+		renderer.init(winSize, "Simple SDL App");
+		CameraBounds = new Rect(0, 0, winSize.w,winSize.h);
 		MaxEnemies = 2;
 
 		for (int i = 0; i < MaxEnemies; i++)
@@ -102,6 +108,9 @@ bool Game::init(int num) {
 	}
 	else if (gridSize == 20)
 	{
+		Size2D winSize(400, 400);
+		renderer.init(winSize, "Simple SDL App");
+		CameraBounds = new Rect(0, 0, winSize.w, winSize.h);
 		MaxEnemies = 4;
 
 		for (int i = 0; i < MaxEnemies; i++)
@@ -121,9 +130,12 @@ bool Game::init(int num) {
 		}
 		
 	}
-	else if (gridSize == 100)
+	else if (gridSize == 1000)
 	{
-		int mm = 700;
+		Size2D winSize(800, 800);
+		renderer.init(winSize, "Simple SDL App");
+		CameraBounds = new Rect(0, 0, winSize.w, winSize.h);
+		int mm = 800;
 		MaxEnemies = 0;
 
 		for (int i = 0; i < mm; i++)
@@ -142,13 +154,27 @@ bool Game::init(int num) {
 		}
 	
 	}
-
-
-	//std::thread t1(&Game::ThreadAstar, this, 0, 2);
-	//std::thread t2(&Game::ThreadAstar, this, 2, 4);
-	//t1.join();
-	//t2.join();
 	
+
+	/*	std::thread t1(&Game::ThreadAstar, this, 0, MaxEnemies / 8);
+		std::thread t2(&Game::ThreadAstar, this, MaxEnemies / 8, MaxEnemies / 8* 2);
+		std::thread t3(&Game::ThreadAstar, this, MaxEnemies / 8 * 2, MaxEnemies / 8 * 3);
+		std::thread t4(&Game::ThreadAstar, this, MaxEnemies / 8 * 3, MaxEnemies / 8 * 4);
+
+		std::thread t5(&Game::ThreadAstar, this, MaxEnemies / 8 * 4, MaxEnemies / 8 * 5);
+		std::thread t6(&Game::ThreadAstar, this, MaxEnemies / 8 * 5, MaxEnemies / 8 * 6);
+		std::thread t7(&Game::ThreadAstar, this, MaxEnemies / 8 * 6, MaxEnemies / 8 * 7);
+		std::thread t8(&Game::ThreadAstar, this, MaxEnemies / 8 * 7, MaxEnemies / 8);
+		t1.join();
+		t2.join();
+		t3.join();
+		t4.join();
+		t5.join();
+		t6.join();
+		t7.join();
+		t8.join();*/
+	
+
 	m_tiles[4][2].setFilled(true);
 	m_tiles[4][3].setFilled(true);
 	m_tiles[4][4].setFilled(true);
@@ -156,11 +182,7 @@ bool Game::init(int num) {
 	m_tiles[4][6].setFilled(true);
 	m_tiles[4][7].setFilled(true);
 
-
-	for (int i = 0; i < MaxEnemies; i++)
-	{
-		enemies[i].aStar(playerRow, playerCol, m_tiles);
-	}
+	//aStar();
 	
 //	enemy1->aStar(playerRow, playerCol, m_tiles);
 //	enemy2->aStar(playerRow, playerCol, m_tiles);
@@ -215,10 +237,10 @@ void Game::render()
 	
 	
 
-	for (int row = 0; row < gridSize; row++)
+	for (int row = CameraBounds->pos.y; row < CameraBounds->size.w/tileHeight; row++)
 	{
 
-		for (int col = 0; col < gridSize; col++)
+		for (int col = CameraBounds->pos.x; col < CameraBounds->size.w / tileWidth; col++)
 		{
 			m_tiles[row][col].Render(renderer);
 		}
@@ -268,10 +290,24 @@ void Game::onEvent(EventListener::Event evt) {
 	if (evt == EventListener::Event::UP||evt == EventListener::Event::DOWN||evt == EventListener::Event::LEFT||evt == EventListener::Event::RIGHT) {
 		//enemy1->aStar(playerRow, playerCol, m_tiles);
 		//enemy2->aStar(playerRow, playerCol, m_tiles);
-	/*	std::thread t1(&Game::ThreadAstar, this, 0, 2);
-		std::thread t2(&Game::ThreadAstar, this, 2, 4);
-		t1.join();
-		t2.join();*/
+		//aStar();
+		//std::thread t1(&Game::ThreadAstar, this, 0, MaxEnemies / 8);
+		//std::thread t2(&Game::ThreadAstar, this, MaxEnemies / 8, MaxEnemies / 8* 2);
+		//std::thread t3(&Game::ThreadAstar, this, MaxEnemies / 8 * 2, MaxEnemies / 8 * 3);
+		//std::thread t4(&Game::ThreadAstar, this, MaxEnemies / 8 * 3, MaxEnemies / 8 * 4);
+
+		//std::thread t5(&Game::ThreadAstar, this, MaxEnemies / 8 * 4, MaxEnemies / 8 * 5);
+		//std::thread t6(&Game::ThreadAstar, this, MaxEnemies / 8 * 5, MaxEnemies / 8 * 6);
+		//std::thread t7(&Game::ThreadAstar, this, MaxEnemies / 8 * 6, MaxEnemies / 8 * 7);
+		//std::thread t8(&Game::ThreadAstar, this, MaxEnemies / 8 * 7, MaxEnemies / 8);
+		//t1.join();
+		//t2.join();
+		//t3.join();
+		//t4.join();
+		//t5.join();
+		//t6.join();
+		//t7.join();
+		//t8.join();
 	
 		
 	}
@@ -283,7 +319,7 @@ void Game::onEvent(EventListener::Event evt) {
 			playerRow--;
 			m_tiles[playerRow][playerCol].setPlayer(true);
 		}
-		aStar();
+		//aStar();
 
 	}
 
@@ -295,7 +331,7 @@ void Game::onEvent(EventListener::Event evt) {
 			playerRow++;
 			m_tiles[playerRow][playerCol].setPlayer(true);
 		}
-		aStar();
+		//aStar();
 	}
 
 	if (evt == EventListener::Event::LEFT) {
@@ -306,18 +342,18 @@ void Game::onEvent(EventListener::Event evt) {
 			playerCol--;
 			m_tiles[playerRow][playerCol].setPlayer(true);
 		}
-		aStar();
+		//aStar();
 	}
 
 	if (evt == EventListener::Event::RIGHT) {
-
-		if (playerCol < gridSize-1 && m_tiles[playerRow][playerCol + 1].getFilled() == false)
+		CameraBounds->pos.x++;
+		/*if (playerCol < gridSize-1 && m_tiles[playerRow][playerCol + 1].getFilled() == false)
 		{
 			m_tiles[playerRow][playerCol].setPlayer(false);
 			playerCol++;
 			m_tiles[playerRow][playerCol].setPlayer(true);
-		}
-		aStar();
+		}*/
+		//aStar();
 		
 	}
 

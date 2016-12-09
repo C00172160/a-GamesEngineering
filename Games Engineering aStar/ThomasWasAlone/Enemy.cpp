@@ -35,7 +35,7 @@ void Enemy::Update(unsigned int deltaTime,  Tiles ** t)
 	{
 		count += deltaTime;
 
-		if (count > 100 && t[Path[0].getRow()][Path[0].getCol()].getEnemy() == false && targetFound == true)
+		if (count > 100 )//&& t[Path[0].getRow()][Path[0].getCol()].getEnemy() == false && targetFound == true)
 		{
 
 			t[positionY][positionX].setEnemy(false);
@@ -64,7 +64,7 @@ void Enemy::aStar(int targetRow, int targetCol, Tiles ** t)
 	targetROW = targetRow;
 	StartRow = positionY;
 	StartCol = positionX;
-	targetFound = false;
+	
 	targetFound = false;
 	fCost = 100000;
 	openList.clear();
@@ -118,7 +118,7 @@ void Enemy::aStar(int targetRow, int targetCol, Tiles ** t)
 		{
 			Loopcount++;
 
-			if (Loopcount > 100)
+			if (Loopcount > 1000)
 			{
 				break;
 			}
@@ -138,22 +138,22 @@ void Enemy::getAdjacent(Tiles ** t, int tileRow, int tileCol)
 
 
 	adjacentList.clear();
-	if (tileRow > 0 && tileCol >0)
-	adjacentList.push_back(Tiles(tileRow-1,tileCol-1,0));//only check the tiles around yourself so you are not checking the whole array
+	//if (tileRow > 0 && tileCol >0)
+	//adjacentList.push_back(Tiles(tileRow-1,tileCol-1,0));//only check the tiles around yourself so you are not checking the whole array
 	if (tileRow >0)
 	adjacentList.push_back(Tiles(tileRow - 1, tileCol, 0));
-	if (tileRow>0 && tileCol < gridSize -1)
-	adjacentList.push_back(Tiles(tileRow - 1, tileCol +1 , 0));
+	//if (tileRow>0 && tileCol < gridSize -1)
+	//adjacentList.push_back(Tiles(tileRow - 1, tileCol +1 , 0));
 	if (tileCol >0)
 	adjacentList.push_back(Tiles(tileRow , tileCol - 1, 0));
 	if (tileCol < gridSize -1)
 	adjacentList.push_back(Tiles(tileRow , tileCol +1, 0));
-	if (tileRow < gridSize -1 && tileCol > 0)
-	adjacentList.push_back(Tiles(tileRow + 1, tileCol - 1, 0));
+	//if (tileRow < gridSize -1 && tileCol > 0)
+	//adjacentList.push_back(Tiles(tileRow + 1, tileCol - 1, 0));
 	if (tileRow < gridSize -1)
 	adjacentList.push_back(Tiles(tileRow + 1, tileCol, 0));
-	if (tileRow < gridSize -1 && tileCol < gridSize -1)
-	adjacentList.push_back(Tiles(tileRow +1, tileCol + 1, 0));
+	//if (tileRow < gridSize -1 && tileCol < gridSize -1)
+	//adjacentList.push_back(Tiles(tileRow +1, tileCol + 1, 0));
 
 	for (int i = 0; i < adjacentList.size(); i++)
 	{	
@@ -161,15 +161,11 @@ void Enemy::getAdjacent(Tiles ** t, int tileRow, int tileCol)
 		int col = adjacentList[i].getCol();
 
 	
-		if (t[row][col].getFilled() == false)
+		if (t[row][col].getFilled() == false)// && t[row][col].getEnemy() == false)
 		{
 			openList.push_back(Tiles(adjacentList[i].getRow(), adjacentList[i].getCol(), 0));
 		}
-		
-		
-		
-		
-		
+
 	}
 
 	
