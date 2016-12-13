@@ -10,7 +10,10 @@ public:
 	Tiles();
 	~Tiles();
 
-	void Render(Renderer & renderer);
+	void Render(Renderer & renderer, float cameraOffsetX, float cameraOffsetY);
+
+	
+	
 	void Update(unsigned int deltaTime);
 
 	Rect getRectangle();
@@ -22,13 +25,14 @@ public:
 	int getCol();
 	bool getFilled();
 	int getFvalue();
-
+	void setParent(int row, int col);
 	void setPlayer(bool b);
 	void setEnemy(bool b);
 	void setFilled(bool b);
 	void setFvalue(int f);
 
 	void setColour(int r, int g, int b, int a);
+
 
 private:
 	Rect rect;
@@ -38,5 +42,6 @@ private:
 	bool enemy;
 	bool filled;
 	int fValue;
+	int parentROW, parentCOL;
 };
 

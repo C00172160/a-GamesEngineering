@@ -33,18 +33,22 @@ class Game:public EventListener
 	Enemy *enemy1;
 	Enemy *enemy2;
 
+	float cameraOffsetX;
+	float cameraOffsetY;
+
 public:
 	Game();
 	~Game();
 	void ThreadAstar(int start,int end );
 	bool init(int num);
 	void aStar();
+	void SetupMap();
 	void destroy();
 	void update();
 	void updateArray();
 	void render();
 	void loop();
-
+	void MoveRight();
 	void onEvent(EventListener::Event);
 };
 

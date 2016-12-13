@@ -50,7 +50,7 @@ bool Game::init(int num) {
 	 }
 
 	 tileWidth = 20;//winSize.w / gridSize;//find the width of a tiles depending on how big the screen is
-		 tileHeight = 20;// winSize.h / gridSize;
+	 tileHeight = 20;// winSize.h / gridSize;
 	//creates our renderer, which looks after drawing and the window
 	
 	lastTime = LTimer::gameTime();
@@ -83,7 +83,8 @@ bool Game::init(int num) {
 
 	if (gridSize == 10)
 	{
-		Size2D winSize(200, 200);
+		
+		Size2D winSize(gridSize*tileWidth, gridSize*tileHeight);
 		renderer.init(winSize, "Simple SDL App");
 		CameraBounds = new Rect(0, 0, winSize.w,winSize.h);
 		MaxEnemies = 2;
@@ -106,12 +107,13 @@ bool Game::init(int num) {
 		}
 	
 	}
+
 	else if (gridSize == 20)
 	{
-		Size2D winSize(400, 400);
+		Size2D winSize(gridSize*tileWidth, gridSize*tileHeight);
 		renderer.init(winSize, "Simple SDL App");
 		CameraBounds = new Rect(0, 0, winSize.w, winSize.h);
-		MaxEnemies = 4;
+		MaxEnemies = 1;
 
 		for (int i = 0; i < MaxEnemies; i++)
 		{
@@ -130,18 +132,42 @@ bool Game::init(int num) {
 		}
 		
 	}
+	else if (gridSize == 100)
+	{
+		Size2D winSize(gridSize*tileWidth, gridSize*tileHeight);
+		renderer.init(winSize, "Simple SDL App");
+		CameraBounds = new Rect(0, 0, winSize.w, winSize.h);
+		MaxEnemies = 50;
+
+		for (int i = 0; i < MaxEnemies; i++)
+		{
+			int row = rand() % (gridSize - 1) + 1;
+			int col = rand() % (gridSize - 1) + 1;
+			if (m_tiles[row][col].getEnemy() == false)
+			{
+				m_tiles[row][col].setEnemy(true);
+				enemies.push_back(Enemy(row, col, gridSize));
+			}
+			else
+			{
+				MaxEnemies -= 1;
+			}
+
+		}
+
+	}
 	else if (gridSize == 1000)
 	{
 		Size2D winSize(800, 800);
 		renderer.init(winSize, "Simple SDL App");
 		CameraBounds = new Rect(0, 0, winSize.w, winSize.h);
-		int mm = 800;
+		int mm = 1;
 		MaxEnemies = 0;
 
 		for (int i = 0; i < mm; i++)
 		{
-			int row = rand() % (gridSize - 1) + 1;
-			int col = rand() % (gridSize - 1) + 1;
+			int row =rand() % (gridSize - 1) + 1;
+			int col =rand() % (gridSize - 1) + 1;
 			if (m_tiles[row][col].getEnemy() == false)
 			{
 				m_tiles[row][col].setEnemy(true);
@@ -154,35 +180,47 @@ bool Game::init(int num) {
 		}
 	
 	}
-	
 
-	/*	std::thread t1(&Game::ThreadAstar, this, 0, MaxEnemies / 8);
-		std::thread t2(&Game::ThreadAstar, this, MaxEnemies / 8, MaxEnemies / 8* 2);
-		std::thread t3(&Game::ThreadAstar, this, MaxEnemies / 8 * 2, MaxEnemies / 8 * 3);
-		std::thread t4(&Game::ThreadAstar, this, MaxEnemies / 8 * 3, MaxEnemies / 8 * 4);
+	/*	std::thread t1(&Game::ThreadAstar, this, 0, MaxEnemies / 7);
+		std::thread t2(&Game::ThreadAstar, this, MaxEnemies / 7, MaxEnemies / 7* 2);
+		std::thread t3(&Game::ThreadAstar, this, MaxEnemies / 7 * 2, MaxEnemies / 7 * 3);
+		std::thread t4(&Game::ThreadAstar, this, MaxEnemies / 7 * 3, MaxEnemies / 7 * 4);
 
-		std::thread t5(&Game::ThreadAstar, this, MaxEnemies / 8 * 4, MaxEnemies / 8 * 5);
-		std::thread t6(&Game::ThreadAstar, this, MaxEnemies / 8 * 5, MaxEnemies / 8 * 6);
-		std::thread t7(&Game::ThreadAstar, this, MaxEnemies / 8 * 6, MaxEnemies / 8 * 7);
-		std::thread t8(&Game::ThreadAstar, this, MaxEnemies / 8 * 7, MaxEnemies / 8);
+		std::thread t5(&Game::ThreadAstar, this, MaxEnemies / 7 * 4, MaxEnemies / 7 * 5);
+		std::thread t6(&Game::ThreadAstar, this, MaxEnemies / 7 * 5, MaxEnemies / 7 * 6);
+		std::thread t7(&Game::ThreadAstar, this, MaxEnemies / 7 * 6, MaxEnemies / 7 * 7);
+
 		t1.join();
 		t2.join();
 		t3.join();
 		t4.join();
 		t5.join();
 		t6.join();
-		t7.join();
-		t8.join();*/
-	
+		t7.join();*/
 
-	m_tiles[4][2].setFilled(true);
-	m_tiles[4][3].setFilled(true);
-	m_tiles[4][4].setFilled(true);
-	m_tiles[4][5].setFilled(true);
-	m_tiles[4][6].setFilled(true);
-	m_tiles[4][7].setFilled(true);
 
-	//aStar();
+	//SetupMap();	
+	m_tiles[10][10].setFilled(true);
+	m_tiles[10][9].setFilled(true);
+	m_tiles[10][8].setFilled(true);
+	m_tiles[10][7].setFilled(true);
+	m_tiles[10][6].setFilled(true);
+	m_tiles[10][5].setFilled(true);
+	m_tiles[10][4].setFilled(true);
+	m_tiles[10][3].setFilled(true);
+	m_tiles[10][2].setFilled(true);
+	m_tiles[10][1].setFilled(true);
+
+	m_tiles[9][10].setFilled(true);
+	m_tiles[8][10].setFilled(true);
+	m_tiles[7][10].setFilled(true);
+	m_tiles[6][10].setFilled(true);
+	m_tiles[5][10].setFilled(true);
+	m_tiles[4][10].setFilled(true);
+	m_tiles[3][10].setFilled(true);
+	m_tiles[2][10].setFilled(true);
+	m_tiles[1][10].setFilled(true);
+	aStar();
 	
 //	enemy1->aStar(playerRow, playerCol, m_tiles);
 //	enemy2->aStar(playerRow, playerCol, m_tiles);
@@ -197,7 +235,32 @@ void Game::aStar()
 		enemies[i].aStar(playerRow, playerCol, m_tiles);
 	}
 }
+void Game::SetupMap()
+{
+	for (int row =0; row < gridSize; row++)
+	{
 
+		for (int col = 0; col <gridSize; col++)
+		{
+			if (row < gridSize /2  && col == gridSize /3)
+			{
+				m_tiles[row][col].setFilled(true);
+			}
+
+			if (row < gridSize / 2  && col == gridSize / 3 * 2)
+			{
+				m_tiles[row][col].setFilled(true);
+			}
+
+			if (row > gridSize / 2 && col == gridSize / 2 )
+			{
+				m_tiles[row][col].setFilled(true);
+			}
+		
+		}
+	}
+
+}
 
 void Game::destroy()
 {
@@ -212,15 +275,13 @@ void Game::update()
 	unsigned int currentTime = LTimer::gameTime();//millis since game started
 	unsigned int deltaTime = currentTime - lastTime;//time since last update
 
-	//enemy1->Update(deltaTime,playerRow,playerCol,m_tiles);
-	//save the curent time for next frame
+
 	lastTime = currentTime;
 	for (int i = 0; i < MaxEnemies; i++)
 	{
 		enemies[i].Update(deltaTime, m_tiles);
 	}
-	/*enemy1->Update(deltaTime, m_tiles);
-	enemy2->Update(deltaTime, m_tiles);*/
+
 }
 
 void Game::updateArray()
@@ -233,20 +294,24 @@ void Game::updateArray()
 
 void Game::render()
 {
-	renderer.clear(Colour(0,0,0));// prepare for new frame
-	
-	
+		cameraOffsetX = CameraBounds->pos.x * tileWidth;
+		cameraOffsetY = CameraBounds->pos.y * tileHeight;
 
-	for (int row = CameraBounds->pos.y; row < CameraBounds->size.w/tileHeight; row++)
-	{
+		renderer.clear(Colour(0, 0, 0));// prepare for new frame
 
-		for (int col = CameraBounds->pos.x; col < CameraBounds->size.w / tileWidth; col++)
+
+
+		for (int row = CameraBounds->pos.y; row < (CameraBounds->size.h / tileHeight) + CameraBounds->pos.y; row++)
 		{
-			m_tiles[row][col].Render(renderer);
+
+			for (int col = CameraBounds->pos.x; col < (CameraBounds->size.w / tileWidth) + CameraBounds->pos.x; col++)
+			{
+				m_tiles[row][col].Render(renderer, cameraOffsetX, cameraOffsetY);//only render tiles within camera bounds
+			}
 		}
-	}
 
 	renderer.present();// display the new frame (swap buffers)
+
 
 	
 }
@@ -278,6 +343,8 @@ void Game::loop()
 	}
 }
 
+
+
 void Game::onEvent(EventListener::Event evt) {
 
 	if (evt == EventListener::Event::PAUSE) {
@@ -288,6 +355,7 @@ void Game::onEvent(EventListener::Event evt) {
 		quit=true;
 	}
 	if (evt == EventListener::Event::UP||evt == EventListener::Event::DOWN||evt == EventListener::Event::LEFT||evt == EventListener::Event::RIGHT) {
+
 		//enemy1->aStar(playerRow, playerCol, m_tiles);
 		//enemy2->aStar(playerRow, playerCol, m_tiles);
 		//aStar();
@@ -313,48 +381,45 @@ void Game::onEvent(EventListener::Event evt) {
 	}
 	if (evt == EventListener::Event::UP) {
 
-		if (playerRow > 0 && m_tiles[playerRow - 1][playerCol].getFilled() == false)//only move up if you are not at top and there is an empty space above
-		{
-			m_tiles[playerRow][playerCol].setPlayer(false);
-			playerRow--;
-			m_tiles[playerRow][playerCol].setPlayer(true);
+		if (CameraBounds->pos.y != 0)
+		{ 
+		CameraBounds->pos.y -= 1;
 		}
-		//aStar();
+	
+
 
 	}
 
 	if (evt == EventListener::Event::DOWN) {
-
-		if (playerRow < gridSize-1 && m_tiles[playerRow + 1][playerCol].getFilled() == false)
+		if (CameraBounds->pos.y < gridSize - (CameraBounds->size.w / tileHeight))
 		{
-			m_tiles[playerRow][playerCol].setPlayer(false);
-			playerRow++;
-			m_tiles[playerRow][playerCol].setPlayer(true);
+			CameraBounds->pos.y += 1;
 		}
-		//aStar();
-	}
-
-	if (evt == EventListener::Event::LEFT) {
-
-		if (playerCol > 0  && m_tiles[playerRow ][playerCol -1].getFilled() == false)
-		{
-			m_tiles[playerRow][playerCol].setPlayer(false);
-			playerCol--;
-			m_tiles[playerRow][playerCol].setPlayer(true);
-		}
-		//aStar();
-	}
-
-	if (evt == EventListener::Event::RIGHT) {
-		CameraBounds->pos.x++;
-		/*if (playerCol < gridSize-1 && m_tiles[playerRow][playerCol + 1].getFilled() == false)
-		{
-			m_tiles[playerRow][playerCol].setPlayer(false);
-			playerCol++;
-			m_tiles[playerRow][playerCol].setPlayer(true);
-		}*/
-		//aStar();
+	
 		
 	}
 
+	if (evt == EventListener::Event::LEFT) {
+		if (CameraBounds->pos.x != 0)
+		{
+			CameraBounds->pos.x -= 1;
+		}
+	
+	
+	}
+
+	if (evt == EventListener::Event::RIGHT) {
+	
+		if (CameraBounds->pos.x  <gridSize - (CameraBounds->size.w / tileWidth))
+		{
+			CameraBounds->pos.x += 1;
+		}
+		
+		
+	}
+
+	
+
 }
+
+

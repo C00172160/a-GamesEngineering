@@ -45,13 +45,7 @@ void InputManager::ProcessInput()
 		switch (e.type) {
 			/* Keyboard event */
 			case SDL_KEYDOWN:
-				switch (e.key.keysym.sym) {
-				case SDLK_SPACE:
-					Dispatch(EventListener::Event::PAUSE);
-					break;
-				case SDLK_r:
-					Dispatch(EventListener::Event::REVERSE);
-					break;
+				switch (e.key.keysym.sym) {			
 				case SDLK_LEFT:
 					Dispatch(EventListener::Event::LEFT);
 					break;
@@ -63,6 +57,12 @@ void InputManager::ProcessInput()
 					break;
 				case SDLK_DOWN:
 					Dispatch(EventListener::Event::DOWN);
+					break;
+				case SDLK_SPACE:
+					Dispatch(EventListener::Event::SPACE);
+					break;
+				case SDLK_h:
+					Dispatch(EventListener::Event::ZOOM);
 					break;
 
 				}

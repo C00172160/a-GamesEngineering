@@ -21,11 +21,12 @@ public:
 	void Update(unsigned int deltaTime,  Tiles  **t);
 	void aStar(int targetRow,int targetCol,Tiles **t);
 	void getAdjacent(Tiles ** t, int tileRow, int tileCol);
-	void calculateFValues(std::vector<Tiles>& tilelist);
+	void calculateFValues(std::vector<Tiles*>& tilelist);
+	
 private:
-	std::vector<Tiles> adjacentList;
-	std::vector<Tiles> openList;
-	std::vector<Tiles> closedList;
+	std::vector<Tiles*> adjacentList;
+	std::vector<Tiles*> openList;
+	std::vector<Tiles*> closedList;
 	std::vector<Tiles> Path;
 	int currentRow;
 	int currentCol;
@@ -44,6 +45,6 @@ private:
 	int StartCol;
 	int count = 0;
 	int fCost = 10000000;
-
+	int gValue = 0;
 };
 #endif

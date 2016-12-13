@@ -21,6 +21,7 @@ int main()
 	cout << "1 = 10x10" << endl;
 	cout << "2 = 20x20" << endl;
 	cout << "3 = 100x100" << endl;
+	cout << "3 = 1000x1000" << endl;
 	cin >> num;
 	
 	if (num == 1)
@@ -35,7 +36,11 @@ int main()
 	{
 		size = 100;
 	}
-	if (num != 1&& num != 2&& num != 3)
+	if (num == 4)
+	{
+		size = 1000;
+	}
+	if (num != 1&& num != 2&& num != 3 && num != 4)
 	{
 		cout << " invalid number not accepted. defaulting to 10x10";
 		size = 10;

@@ -16,7 +16,9 @@ public:
 		UP,
 		DOWN,
 		LEFT,
-		RIGHT
+		RIGHT,
+		SPACE,
+		ZOOM
 	};
 
 
