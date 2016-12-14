@@ -33,9 +33,10 @@ void Enemy::Update(unsigned int deltaTime,  Tiles ** t)
 	
 	if (Path.size() > 0)
 	{
+	
 		count += deltaTime;
 
-		if (count > 100)// && t[Path[0].getRow()][Path[0].getCol()].getEnemy() == false && targetFound == true)
+		if (count > 1)// && t[Path[0].getRow()][Path[0].getCol()].getEnemy() == false //) targetFound == true)
 		{
 
 			t[positionY][positionX].setEnemy(false);
@@ -51,6 +52,10 @@ void Enemy::Update(unsigned int deltaTime,  Tiles ** t)
 		
 		
 	}
+	
+
+	
+	
 
 	
 
@@ -59,6 +64,7 @@ void Enemy::Update(unsigned int deltaTime,  Tiles ** t)
 
 void Enemy::aStar(int targetRow, int targetCol, Tiles ** t)
 {
+
 	Path.clear();
 	targetCOL = targetCol;
 	targetROW = targetRow;
@@ -109,11 +115,11 @@ void Enemy::aStar(int targetRow, int targetCol, Tiles ** t)
 		}
 
 		
-		/*if (openList.size() >= 400)
+		if (openList.size() >= 400)
 		{
 			targetFound = true;
 		}
-*/
+
 	}
 
 	

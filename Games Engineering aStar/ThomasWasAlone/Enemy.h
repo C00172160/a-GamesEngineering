@@ -46,5 +46,8 @@ private:
 	int count = 0;
 	int fCost = 10000000;
 	int gValue = 0;
+	bool running;
+
+	
 };
 #endif

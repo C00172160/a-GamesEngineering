@@ -4,15 +4,22 @@
 using namespace std;
 
 
-
+#include <SDL_thread.h>
 #include "LTimer.h"
 #include "Tiles.h"
 #include "Game.h"
-#include <thread> 
+
 
 const int SCREEN_FPS = 100;
 const int SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
 
+
+
+
+//std::queue<AStarData> Joblist;
+//vector<Enemy>enemies;
+//Tiles** m_tiles;
+//SDL_mutex* jobListLock = SDL_CreateMutex();
 
 Game::Game()
 {
@@ -25,23 +32,52 @@ Game::~Game()
 {
 }
 
-void Game::ThreadAstar(int start, int end)
+struct AStarData
 {
+	int index;
+	int targetRow;
+	int targetCol;
+	bool valid = false;
+};
 
-	for (int i = start; i < end; i++)
+ SDL_mutex* jobListLock = SDL_CreateMutex();
+ std::queue<AStarData> Joblist;
+ vector<Enemy>enemies;
+ Tiles** m_tiles;
+
+
+ int  Game::threadFunction(void* data )
+{
+	while (true)
 	{
-		enemies[i].aStar(playerRow, playerCol, m_tiles);
-	}
+		while (Joblist.size() == 0) {}; //stuck here until there is a job
 
+		//lock
+		SDL_LockMutex(jobListLock);
+		AStarData data; //got a job so take the one that is first
+		if (Joblist.size() > 0)
+		{
+			data = Joblist.front();
+			Joblist.pop(); //pop it 
+		}
+		SDL_UnlockMutex(jobListLock);
+		//unlock
+
+		//if data not empty/null/0
+		if (data.valid == true)
+		{
+			enemies[data.index].aStar(data.targetRow, data.targetCol, m_tiles);
+			
+		}
+	}
+	return 0;
 }
 
 
 bool Game::init(int num) {	
-
-	
 	gridSize = num;
 	
-	
+	maxThreads= thread::hardware_concurrency() - 1;
 
 	 m_tiles = new Tiles*[gridSize];
 	 for (int i = 0; i < gridSize; ++i)//initilize 2d array
@@ -81,10 +117,10 @@ bool Game::init(int num) {
 	playerCol = 0;
 	m_tiles[playerRow][playerCol].setPlayer(true);
 
-	if (gridSize == 10)
+	if (gridSize == 30)
 	{
 		
-		Size2D winSize(gridSize*tileWidth, gridSize*tileHeight);
+		Size2D winSize(gridSize * tileWidth, gridSize *tileHeight);
 		renderer.init(winSize, "Simple SDL App");
 		CameraBounds = new Rect(0, 0, winSize.w,winSize.h);
 		MaxEnemies = 2;
@@ -108,33 +144,10 @@ bool Game::init(int num) {
 	
 	}
 
-	else if (gridSize == 20)
-	{
-		Size2D winSize(gridSize*tileWidth, gridSize*tileHeight);
-		renderer.init(winSize, "Simple SDL App");
-		CameraBounds = new Rect(0, 0, winSize.w, winSize.h);
-		MaxEnemies = 1;
 
-		for (int i = 0; i < MaxEnemies; i++)
-		{
-			int row = rand() % (gridSize - 1) + 1;
-			int col = rand() % (gridSize - 1) + 1;
-			if (m_tiles[row][col].getEnemy() == false)
-			{
-				m_tiles[row][col].setEnemy(true);
-				enemies.push_back(Enemy(row, col, gridSize));
-			}
-			else
-			{
-				MaxEnemies -= 1;
-			}
-			
-		}
-		
-	}
 	else if (gridSize == 100)
 	{
-		Size2D winSize(gridSize*tileWidth, gridSize*tileHeight);
+		Size2D winSize(500,500);
 		renderer.init(winSize, "Simple SDL App");
 		CameraBounds = new Rect(0, 0, winSize.w, winSize.h);
 		MaxEnemies = 50;
@@ -161,46 +174,41 @@ bool Game::init(int num) {
 		Size2D winSize(800, 800);
 		renderer.init(winSize, "Simple SDL App");
 		CameraBounds = new Rect(0, 0, winSize.w, winSize.h);
-		int mm = 1;
-		MaxEnemies = 0;
+		MaxEnemies = 50;
 
-		for (int i = 0; i < mm; i++)
+		for (int i = 0; i < MaxEnemies; i++)
 		{
-			int row =rand() % (gridSize - 1) + 1;
-			int col =rand() % (gridSize - 1) + 1;
+			int row = rand() % (gridSize - 1) + 1;
+			int col = rand() % (gridSize - 1) + 1;
 			if (m_tiles[row][col].getEnemy() == false)
 			{
 				m_tiles[row][col].setEnemy(true);
 				enemies.push_back(Enemy(row, col, gridSize));
-				MaxEnemies++;
 			}
-			
+			else
+			{
+				MaxEnemies -= 1;
+			}
 
-		
 		}
 	
 	}
 
-	/*	std::thread t1(&Game::ThreadAstar, this, 0, MaxEnemies / 7);
-		std::thread t2(&Game::ThreadAstar, this, MaxEnemies / 7, MaxEnemies / 7* 2);
-		std::thread t3(&Game::ThreadAstar, this, MaxEnemies / 7 * 2, MaxEnemies / 7 * 3);
-		std::thread t4(&Game::ThreadAstar, this, MaxEnemies / 7 * 3, MaxEnemies / 7 * 4);
+	for (int i = 0; i < maxThreads; i++)
+	{
+		threads.push_back(SDL_CreateThread(threadFunction, "thread" + i, (void*)NULL));
+	}
+	for (int i = 0; i < MaxEnemies; i++)
+	{
+		addJob(i);
+	}
 
-		std::thread t5(&Game::ThreadAstar, this, MaxEnemies / 7 * 4, MaxEnemies / 7 * 5);
-		std::thread t6(&Game::ThreadAstar, this, MaxEnemies / 7 * 5, MaxEnemies / 7 * 6);
-		std::thread t7(&Game::ThreadAstar, this, MaxEnemies / 7 * 6, MaxEnemies / 7 * 7);
+	
 
-		t1.join();
-		t2.join();
-		t3.join();
-		t4.join();
-		t5.join();
-		t6.join();
-		t7.join();*/
-
+	
 
 	//SetupMap();	
-	m_tiles[10][10].setFilled(true);
+	/*m_tiles[10][10].setFilled(true);
 	m_tiles[10][9].setFilled(true);
 	m_tiles[10][8].setFilled(true);
 	m_tiles[10][7].setFilled(true);
@@ -219,8 +227,10 @@ bool Game::init(int num) {
 	m_tiles[4][10].setFilled(true);
 	m_tiles[3][10].setFilled(true);
 	m_tiles[2][10].setFilled(true);
-	m_tiles[1][10].setFilled(true);
-	aStar();
+	m_tiles[1][10].setFilled(true);*/
+
+	//aStar();
+
 	
 //	enemy1->aStar(playerRow, playerCol, m_tiles);
 //	enemy2->aStar(playerRow, playerCol, m_tiles);
@@ -273,15 +283,24 @@ void Game::destroy()
 void Game::update()
 {
 	unsigned int currentTime = LTimer::gameTime();//millis since game started
-	unsigned int deltaTime = currentTime - lastTime;//time since last update
+	 deltaTime = currentTime - lastTime;//time since last update
 
 
 	lastTime = currentTime;
 	for (int i = 0; i < MaxEnemies; i++)
 	{
-		enemies[i].Update(deltaTime, m_tiles);
+		enemies[i].Update(deltaTime, m_tiles);		
 	}
-
+	MovePlayer();
+	cout << Joblist.size() << endl;
+	/*if (Joblist.size() <= 0)
+	{
+		for (int i = 0; i < MaxEnemies; i++)
+		{
+			addJob(i);
+		}
+	}*/
+	
 }
 
 void Game::updateArray()
@@ -343,6 +362,22 @@ void Game::loop()
 	}
 }
 
+void Game::MovePlayer()
+{
+
+	PlayerDelay += deltaTime;
+
+	if (PlayerDelay > 100)
+	{
+		m_tiles[playerRow][playerCol].setPlayer(false);
+		playerCol++;
+		playerRow++;
+		m_tiles[playerRow][playerCol].setPlayer(true);
+		PlayerDelay = 0;
+	}
+
+}
+
 
 
 void Game::onEvent(EventListener::Event evt) {
@@ -356,26 +391,7 @@ void Game::onEvent(EventListener::Event evt) {
 	}
 	if (evt == EventListener::Event::UP||evt == EventListener::Event::DOWN||evt == EventListener::Event::LEFT||evt == EventListener::Event::RIGHT) {
 
-		//enemy1->aStar(playerRow, playerCol, m_tiles);
-		//enemy2->aStar(playerRow, playerCol, m_tiles);
-		//aStar();
-		//std::thread t1(&Game::ThreadAstar, this, 0, MaxEnemies / 8);
-		//std::thread t2(&Game::ThreadAstar, this, MaxEnemies / 8, MaxEnemies / 8* 2);
-		//std::thread t3(&Game::ThreadAstar, this, MaxEnemies / 8 * 2, MaxEnemies / 8 * 3);
-		//std::thread t4(&Game::ThreadAstar, this, MaxEnemies / 8 * 3, MaxEnemies / 8 * 4);
-
-		//std::thread t5(&Game::ThreadAstar, this, MaxEnemies / 8 * 4, MaxEnemies / 8 * 5);
-		//std::thread t6(&Game::ThreadAstar, this, MaxEnemies / 8 * 5, MaxEnemies / 8 * 6);
-		//std::thread t7(&Game::ThreadAstar, this, MaxEnemies / 8 * 6, MaxEnemies / 8 * 7);
-		//std::thread t8(&Game::ThreadAstar, this, MaxEnemies / 8 * 7, MaxEnemies / 8);
-		//t1.join();
-		//t2.join();
-		//t3.join();
-		//t4.join();
-		//t5.join();
-		//t6.join();
-		//t7.join();
-		//t8.join();
+		
 	
 		
 	}
@@ -404,22 +420,39 @@ void Game::onEvent(EventListener::Event evt) {
 		{
 			CameraBounds->pos.x -= 1;
 		}
-	
-	
 	}
 
-	if (evt == EventListener::Event::RIGHT) {
-	
-		if (CameraBounds->pos.x  <gridSize - (CameraBounds->size.w / tileWidth))
-		{
-			CameraBounds->pos.x += 1;
+		if (evt == EventListener::Event::RIGHT) {
+
+			if (CameraBounds->pos.x < gridSize - (CameraBounds->size.w / tileWidth))
+			{
+				CameraBounds->pos.x += 1;
+			}
+
+			for (int i = 0; i < MaxEnemies; i++)
+			{
+				addJob(i);
+			}
+
+
 		}
-		
-		
-	}
+	
 
 	
 
+}
+
+void Game::addJob(int index )
+{
+	AStarData data;
+	data.index = index;
+	data.targetRow = playerRow;
+	data.targetCol = playerCol;
+	data.valid = true;
+
+	SDL_LockMutex(jobListLock);
+	Joblist.push(data);
+	SDL_UnlockMutex(jobListLock);
 }
 
 

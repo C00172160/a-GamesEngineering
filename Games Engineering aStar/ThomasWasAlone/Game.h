@@ -9,37 +9,40 @@
 #include "Tiles.h"
 #include <thread>
 #include "Enemy.h"
+#include <queue>
 
 /** The game objct whic manages the game loop*/
 class Game:public EventListener
 {
+	
+
+	
+
 	InputManager inputManager;
 	Renderer renderer;
 	
 	std::vector<GameObject*> gameObjects;
 	unsigned int lastTime;//time of last update;
 	int gridSize = 100;
-	Tiles** m_tiles;
 	int playerRow;
 	int playerCol;
 	int tileWidth;
 	int tileHeight;
 	bool pause;
 	bool quit;
-	vector<Enemy>enemies;
 	int MaxEnemies;
 	
 	Rect* CameraBounds;
-	Enemy *enemy1;
-	Enemy *enemy2;
-
 	float cameraOffsetX;
 	float cameraOffsetY;
 
+	unsigned int deltaTime;
+	float PlayerDelay;
+	int maxThreads;
+	
 public:
 	Game();
 	~Game();
-	void ThreadAstar(int start,int end );
 	bool init(int num);
 	void aStar();
 	void SetupMap();
@@ -48,7 +51,12 @@ public:
 	void updateArray();
 	void render();
 	void loop();
-	void MoveRight();
+	void MovePlayer();
 	void onEvent(EventListener::Event);
+	void addJob(int index);
+	static int  threadFunction(void* data);
+	std::vector<SDL_Thread*> threads;
+
+	
 };
 

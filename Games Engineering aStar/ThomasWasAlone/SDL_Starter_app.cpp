@@ -18,28 +18,25 @@ int main()
 	cout << "Initialising Game" << endl;
 
 	cout << "Select Grid Size" << endl;
-	cout << "1 = 10x10" << endl;
-	cout << "2 = 20x20" << endl;
-	cout << "3 = 100x100" << endl;
+	cout << "1 = 30x30" << endl;
+	cout << "2 = 100x100" << endl;
 	cout << "3 = 1000x1000" << endl;
+	
 	cin >> num;
 	
 	if (num == 1)
 	{
-		size = 10;
+		size = 30;
 	}
 	else if (num == 2)
 	{
-		size = 20;
+		size = 100;
 	}
 	if (num == 3)
 	{
-		size = 100;
-	}
-	if (num == 4)
-	{
 		size = 1000;
 	}
+	
 	if (num != 1&& num != 2&& num != 3 && num != 4)
 	{
 		cout << " invalid number not accepted. defaulting to 10x10";
