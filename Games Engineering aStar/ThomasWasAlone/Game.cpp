@@ -59,7 +59,7 @@ struct AStarData
 		AStarData data; //got a job so take the one that is first
 		if (Joblist.size() > 0)
 		{
-			SDL_SemWait(sem);
+		//	SDL_SemWait(sem);
 			data = Joblist.front();
 			//cout << "hi" << endl;
 			Joblist.pop(); //pop it 
@@ -452,7 +452,7 @@ void Game::addJob(int index )
 
 	SDL_LockMutex(jobListLock);
 	Joblist.push(data);
-	SDL_SemPost(sem);
+	//SDL_SemPost(sem);
 	SDL_UnlockMutex(jobListLock);
 	
 }
