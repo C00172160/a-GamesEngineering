@@ -36,7 +36,7 @@ void Enemy::Update(unsigned int deltaTime,  Tiles ** t)
 	
 		count += deltaTime;
 
-		if (count > 1)// && t[Path[0].getRow()][Path[0].getCol()].getEnemy() == false //) targetFound == true)
+		if (count > 2)// && t[Path[0].getRow()][Path[0].getCol()].getEnemy() == false //) targetFound == true)
 		{
 
 			t[positionY][positionX].setEnemy(false);

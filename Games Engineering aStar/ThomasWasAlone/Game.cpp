@@ -41,6 +41,8 @@ struct AStarData
 };
 
  SDL_mutex* jobListLock = SDL_CreateMutex();
+ SDL_sem *sem = SDL_CreateSemaphore(0);
+ 
  std::queue<AStarData> Joblist;
  vector<Enemy>enemies;
  Tiles** m_tiles;
@@ -52,12 +54,14 @@ struct AStarData
 	{
 		while (Joblist.size() == 0) {}; //stuck here until there is a job
 
-		//lock
-		SDL_LockMutex(jobListLock);
+	
+		SDL_LockMutex(jobListLock);//lock this section.
 		AStarData data; //got a job so take the one that is first
 		if (Joblist.size() > 0)
 		{
+			SDL_SemWait(sem);
 			data = Joblist.front();
+			//cout << "hi" << endl;
 			Joblist.pop(); //pop it 
 		}
 		SDL_UnlockMutex(jobListLock);
@@ -66,7 +70,7 @@ struct AStarData
 		//if data not empty/null/0
 		if (data.valid == true)
 		{
-			enemies[data.index].aStar(data.targetRow, data.targetCol, m_tiles);
+			enemies[data.index].aStar(data.targetRow, data.targetCol, m_tiles);//run astar
 			
 		}
 	}
@@ -174,7 +178,7 @@ bool Game::init(int num) {
 		Size2D winSize(800, 800);
 		renderer.init(winSize, "Simple SDL App");
 		CameraBounds = new Rect(0, 0, winSize.w, winSize.h);
-		MaxEnemies = 50;
+		MaxEnemies = 200;
 
 		for (int i = 0; i < MaxEnemies; i++)
 		{
@@ -194,6 +198,10 @@ bool Game::init(int num) {
 	
 	}
 
+
+
+
+
 	for (int i = 0; i < maxThreads; i++)
 	{
 		threads.push_back(SDL_CreateThread(threadFunction, "thread" + i, (void*)NULL));
@@ -208,7 +216,7 @@ bool Game::init(int num) {
 	
 
 	//SetupMap();	
-	/*m_tiles[10][10].setFilled(true);
+	m_tiles[10][10].setFilled(true);
 	m_tiles[10][9].setFilled(true);
 	m_tiles[10][8].setFilled(true);
 	m_tiles[10][7].setFilled(true);
@@ -227,13 +235,11 @@ bool Game::init(int num) {
 	m_tiles[4][10].setFilled(true);
 	m_tiles[3][10].setFilled(true);
 	m_tiles[2][10].setFilled(true);
-	m_tiles[1][10].setFilled(true);*/
+	m_tiles[1][10].setFilled(true);
 
 	//aStar();
 
 	
-//	enemy1->aStar(playerRow, playerCol, m_tiles);
-//	enemy2->aStar(playerRow, playerCol, m_tiles);
 	return true;
 
 }
@@ -291,15 +297,9 @@ void Game::update()
 	{
 		enemies[i].Update(deltaTime, m_tiles);		
 	}
-	MovePlayer();
-	cout << Joblist.size() << endl;
-	/*if (Joblist.size() <= 0)
-	{
-		for (int i = 0; i < MaxEnemies; i++)
-		{
-			addJob(i);
-		}
-	}*/
+	//MovePlayer();
+
+	
 	
 }
 
@@ -452,7 +452,9 @@ void Game::addJob(int index )
 
 	SDL_LockMutex(jobListLock);
 	Joblist.push(data);
+	SDL_SemPost(sem);
 	SDL_UnlockMutex(jobListLock);
+	
 }
 
 
